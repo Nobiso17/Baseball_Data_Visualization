@@ -14,7 +14,7 @@ WH_DB   = "warehouse.db"
 OUT_DIR = Path("data/output")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# helpers 
 
 def src():
     return sqlite3.connect(SRC_DB)
@@ -26,7 +26,7 @@ def run(con, sql: str):
     con.executescript(sql)
     con.commit()
 
-# ── Stage: copy raw tables into warehouse ─────────────────────────────────────
+# copy raw tables into warehouse 
 
 STAGE_TABLES = ["batting", "pitching", "people", "teams", "salaries",
                 "halloffame", "awardsplayers"]
@@ -39,11 +39,11 @@ def stage():
         count = wh().execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
         print(f"  {t}: {count:,} rows")
 
-# ── Transform: build mart tables ──────────────────────────────────────────────
+# transform build mart tables
 
 TRANSFORMS = {
 
-    # ── Batting: career totals for players with 1000+ AB (modern era 1950+) ──
+    # Batting: career totals for players with 1000+ AB (modern era 1950+)
     "mart_career_batting": """
         DROP TABLE IF EXISTS mart_career_batting;
         CREATE TABLE mart_career_batting AS
@@ -78,7 +78,7 @@ TRANSFORMS = {
         ORDER BY home_runs DESC;
     """,
 
-    # ── All-time HR leaders (top 50) ─────────────────────────────────────────
+    # All-time HR leaders (top 50)
     "mart_hr_leaders": """
         DROP TABLE IF EXISTS mart_hr_leaders;
         CREATE TABLE mart_hr_leaders AS
@@ -97,7 +97,7 @@ TRANSFORMS = {
         LIMIT 50;
     """,
 
-    # ── Salary analysis: avg salary by year (1985–2016) ──────────────────────
+    # Salary analysis: avg salary by year (1985–2016)
     "mart_salary_by_year": """
         DROP TABLE IF EXISTS mart_salary_by_year;
         CREATE TABLE mart_salary_by_year AS
@@ -113,7 +113,7 @@ TRANSFORMS = {
         ORDER BY yearID;
     """,
 
-    # ── Top 25 highest single-season salaries ────────────────────────────────
+    # Top 25 highest single-season salaries 
     "mart_top_salaries": """
         DROP TABLE IF EXISTS mart_top_salaries;
         CREATE TABLE mart_top_salaries AS
@@ -130,7 +130,7 @@ TRANSFORMS = {
         LIMIT 25;
     """,
 
-    # ── Team win totals by decade ─────────────────────────────────────────────
+    # Team win totals by decade
     "mart_team_wins_by_decade": """
         DROP TABLE IF EXISTS mart_team_wins_by_decade;
         CREATE TABLE mart_team_wins_by_decade AS
@@ -150,7 +150,7 @@ TRANSFORMS = {
         ORDER BY decade DESC, total_wins DESC;
     """,
 
-    # ── Hall of Fame inductees with career batting stats ─────────────────────
+    # Hall of Fame inductees with career batting stats
     "mart_hof_batters": """
         DROP TABLE IF EXISTS mart_hof_batters;
         CREATE TABLE mart_hof_batters AS
@@ -174,7 +174,7 @@ TRANSFORMS = {
         ORDER BY career_hr DESC;
     """,
 
-    # ── Pitching: career ERA leaders (min 1000 IP = 3000 outs) ───────────────
+    # Pitching: career ERA leaders (min 1000 IP = 3000 outs)
     "mart_career_pitching": """
         DROP TABLE IF EXISTS mart_career_pitching;
         CREATE TABLE mart_career_pitching AS
@@ -216,7 +216,7 @@ def transform():
     con.close()
 
 
-# ── Export ────────────────────────────────────────────────────────────────────
+# export
 
 def export():
     print("\nExporting CSVs…")
@@ -229,7 +229,7 @@ def export():
     con.close()
 
 
-# ── Summary ───────────────────────────────────────────────────────────────────
+# summary 
 
 def summary():
     con = wh()
@@ -242,20 +242,19 @@ def summary():
     ).fetchall()
     con.close()
 
-    print("\n── All-Time HR Leaders ────────────────────────")
+    print("\nAll-Time HR Leaders")
     for i, (name, hr) in enumerate(top_hr, 1):
         print(f"  {i}. {name:<25} {hr:>4} HR")
 
-    print("\n── Average MLB Salary (selected years) ────────")
+    print("\nAverage MLB Salary (selected years)")
     for year, sal in avg_sal:
         print(f"  {year}   ${sal:.2f}M")
-    print("───────────────────────────────────────────────\n")
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# main
 
 if __name__ == "__main__":
-    print("=== Baseball Analytics Pipeline ===\n")
+    print("Baseball Analytics Pipeline\n")
     stage()
     transform()
     export()
