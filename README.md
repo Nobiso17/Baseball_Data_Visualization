@@ -1,4 +1,4 @@
-# Baseball_Data_Visualization — Lahman Database
+# Baseball Data Visualization — Lahman Database
 
 An end-to-end SQL analytics pipeline built on the Lahman Baseball Database (1871–2019). Transforms 107k+ batting records and 47k+ pitching records through a layered warehouse into dashboard-ready mart tables and a multi-panel visualization.
 
