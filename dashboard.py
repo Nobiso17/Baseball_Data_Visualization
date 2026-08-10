@@ -13,7 +13,7 @@ import numpy as np
 
 WH_DB = "warehouse.db"
 
-# ── Theme ─────────────────────────────────────────────────────────────────────
+# Theme 
 BG       = "#0d1117"
 PANEL_BG = "#161b22"
 BORDER   = "#30363d"
@@ -49,7 +49,7 @@ def load(table):
 def panel_title(ax, title):
     ax.set_title(title, color=TEXT, fontsize=10, fontweight="bold", pad=10, loc="left")
 
-# ── Plot 1: MLB Average Salary Growth (1985–2016) ────────────────────────────
+# Plot 1: MLB Average Salary Growth (1985–2016) 
 def plot_salary_growth(ax):
     df = load("mart_salary_by_year")
     ax.plot(df["yearID"], df["avg_salary_millions"], color=GREEN, linewidth=2)
@@ -69,7 +69,7 @@ def plot_salary_growth(ax):
     ax.grid(True, axis="y")
     panel_title(ax, "MLB Average Salary Growth  1985 – 2016")
 
-# ── Plot 2: All-Time HR Leaders (top 15) ─────────────────────────────────────
+# Plot 2: All-Time HR Leaders (top 15)
 def plot_hr_leaders(ax):
     df = load("mart_hr_leaders").head(15).sort_values("career_hr")
     colors = [RED if hr >= 700 else BLUE for hr in df["career_hr"]]
@@ -88,7 +88,7 @@ def plot_hr_leaders(ax):
     ax.grid(True, axis="x")
     panel_title(ax, "All-Time Home Run Leaders")
 
-# ── Plot 3: ERA Leaders — career (top 20 lowest ERA, min 1000 IP) ────────────
+# Plot 3: ERA Leaders — career (top 20 lowest ERA, min 1000 IP)
 def plot_era_leaders(ax):
     df = load("mart_career_pitching").head(20).sort_values("era", ascending=False)
     colors = [GREEN if e < 2.5 else BLUE if e < 3.0 else GOLD for e in df["era"]]
@@ -107,7 +107,7 @@ def plot_era_leaders(ax):
     ax.grid(True, axis="x")
     panel_title(ax, "Career ERA Leaders  (min 1,000 IP, since 1920)")
 
-# ── Plot 4: Batting Avg vs HR — HOF batters scatter ──────────────────────────
+# Plot 4: Batting Avg vs HR — HOF batters scatter 
 def plot_hof_scatter(ax):
     df = load("mart_hof_batters").dropna(subset=["batting_avg", "career_hr"])
     df = df[df["career_hr"] > 0]
@@ -136,7 +136,7 @@ def plot_hof_scatter(ax):
     ax.grid(True)
     panel_title(ax, "HOF Batters — HR vs Batting Avg  (color = career hits)")
 
-# ── Plot 5: Win % by decade — top 5 franchises ───────────────────────────────
+# Plot 5: Win % by decade — top 5 franchises 
 def plot_franchise_wins(ax):
     df = load("mart_team_wins_by_decade")
     df = df[df["decade"] >= 1950]
@@ -163,7 +163,7 @@ def plot_franchise_wins(ax):
     ax.grid(True)
     panel_title(ax, "Win % by Decade — Top 5 Franchises  (since 1950)")
 
-# ── Plot 6: Summary stat cards ────────────────────────────────────────────────
+# Plot 6: Summary stat cards 
 def plot_stat_cards(ax):
     ax.axis("off")
     con = sqlite3.connect(WH_DB)
@@ -207,7 +207,7 @@ def plot_stat_cards(ax):
 
     panel_title(ax, "At a Glance")
 
-# ── Assemble ──────────────────────────────────────────────────────────────────
+# Assemble
 def main():
     fig = plt.figure(figsize=(18, 13))
     fig.patch.set_facecolor(BG)
